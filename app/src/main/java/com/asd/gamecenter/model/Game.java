@@ -5,19 +5,19 @@ import android.os.Parcelable;
 
 public class Game implements Parcelable {
 
-    private int id, stock, price;
+    private int stock, price, qty, playingHour;
     private double rating;
-    private String name, description, genre;
+    private String name, description, genre, id;
 
     public Game(){
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -69,6 +69,22 @@ public class Game implements Parcelable {
         this.genre = genre;
     }
 
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public int getPlayingHour() {
+        return playingHour;
+    }
+
+    public void setPlayingHour(int playingHour) {
+        this.playingHour = playingHour;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -76,23 +92,27 @@ public class Game implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeString(this.genre);
         dest.writeInt(this.stock);
         dest.writeInt(this.price);
         dest.writeDouble(this.rating);
+        dest.writeInt(this.qty);
+        dest.writeInt(this.playingHour);
     }
 
     private Game(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         name = in.readString();
         description = in.readString();
         genre = in.readString();
         stock = in.readInt();
         price = in.readInt();
         rating = in.readDouble();
+        qty = in.readInt();
+        playingHour = in.readInt();
     }
 
     public static final Creator<Game> CREATOR = new Creator<Game>() {
