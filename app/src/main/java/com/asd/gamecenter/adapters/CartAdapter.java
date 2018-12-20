@@ -14,13 +14,13 @@ import android.widget.Toast;
 
 import com.asd.gamecenter.R;
 import com.asd.gamecenter.database.GameCenterHelper;
-import com.asd.gamecenter.fragments.LoadCart;
-import com.asd.gamecenter.fragments.LoadTotalPrice;
+import com.asd.gamecenter.data.LoadCart;
+import com.asd.gamecenter.data.LoadTotalPrice;
 import com.asd.gamecenter.model.Game;
 
 import java.util.ArrayList;
 
-@SuppressLint("SetTextI18n")
+@SuppressLint({"SetTextI18n", "RecyclerView"})
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context context;

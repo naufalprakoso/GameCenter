@@ -1,4 +1,4 @@
-package com.asd.gamecenter.fragments;
+package com.asd.gamecenter.data;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;

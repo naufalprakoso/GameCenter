@@ -71,7 +71,7 @@ public class MyWalletFragment extends Fragment {
         new LoadWalletBalance().execute();
     }
 
-    public class LoadWalletBalance extends AsyncTask<Void, Void, Integer> {
+    private class LoadWalletBalance extends AsyncTask<Void, Void, Integer> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

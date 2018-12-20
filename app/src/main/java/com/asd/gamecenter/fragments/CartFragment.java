@@ -10,14 +10,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.asd.gamecenter.R;
+import com.asd.gamecenter.data.LoadCart;
+import com.asd.gamecenter.data.LoadTotalPrice;
 import com.asd.gamecenter.database.GameCenterHelper;
 
 public class CartFragment extends Fragment {
 
-    GameCenterHelper gameCenterHelper;
+    private GameCenterHelper gameCenterHelper;
 
-    RecyclerView recyclerView;
-    TextView txtPrice, txtEmpty;
+    private RecyclerView recyclerView;
+    private TextView txtPrice, txtEmpty;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

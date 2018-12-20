@@ -55,7 +55,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             null,
                             null,
                             email,
-                            password
+                            password,
+                            null
                     ));
 
                     if (user != null){

@@ -3,10 +3,8 @@ package com.asd.gamecenter.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,6 +16,8 @@ import com.asd.gamecenter.database.GameCenterHelper;
 import com.asd.gamecenter.model.Game;
 
 public class GameDetailActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private FloatingActionButton fab;
 
     private GameCenterHelper gameCenterHelper;
     private Game game;
@@ -39,7 +39,7 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
         TextView txtPrice = findViewById(R.id.txt_price);
         TextView txtStock = findViewById(R.id.txt_stock);
         TextView txtGenre = findViewById(R.id.txt_genre);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         RatingBar ratingBar = findViewById(R.id.star_rating);
 
         getSupportActionBar().setTitle(game.getName());
@@ -58,14 +58,13 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
 
         gameCenterHelper = new GameCenterHelper(this);
         gameCenterHelper.open();
-
-        Log.v("InfoGame", "ID: " + getId);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         new LoadCartState().execute();
+        new LoadMyGameState().execute();
     }
 
     @Override
@@ -86,12 +85,12 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public boolean onNavigateUp() {
+    public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onNavigateUp();
     }
 
-    public class LoadCartState extends AsyncTask<Void, Void, Boolean> {
+    private class LoadCartState extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -107,6 +106,27 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
             super.onPostExecute(result);
 
             resultState = result;
+        }
+    }
+
+    private class LoadMyGameState extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return gameCenterHelper.checkMyGamesState(getId);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if (result){
+                fab.hide();
+            }
         }
     }
 }

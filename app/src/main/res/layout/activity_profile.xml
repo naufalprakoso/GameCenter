@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
-    android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.InformationFragment">
+    tools:context=".activities.ProfileActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,25 +12,30 @@
         android:orientation="vertical"
         android:layout_margin="@dimen/dimen_16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/information"
-            android:textStyle="bold"
-            android:textSize="20sp"/>
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:tint="@color/colorPrimary"
+            android:src="@drawable/ic_account_circle_black_24dp"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_8dp"
-            android:text="@string/about_us"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:id="@+id/txt_name"/>
 
-        <fragment
-            android:layout_marginTop="@dimen/dimen_16dp"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_email"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_phone"/>
 
     </LinearLayout>
 

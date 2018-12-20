@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.asd.gamecenter.data.Key;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+class DatabaseHelper extends SQLiteOpenHelper {
     private static String DATABASE_NAME = Key.DATABASE;
     private static final int DATABASE_VERSION = 4;
     private static final String SQL_CREATE_TABLE_CART = String.format("CREATE TABLE %s"

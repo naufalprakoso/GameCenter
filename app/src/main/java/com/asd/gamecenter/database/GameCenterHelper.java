@@ -1,12 +1,12 @@
 package com.asd.gamecenter.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.asd.gamecenter.data.Key;
 import com.asd.gamecenter.model.Game;
@@ -33,10 +33,6 @@ public class GameCenterHelper {
         database = dataBaseHelper.getWritableDatabase();
     }
 
-    public void close() {
-        dataBaseHelper.close();
-    }
-
     public void insertUser(User user) {
         ContentValues initialValues =  new ContentValues();
         initialValues.put("UserID", user.getId());
@@ -57,12 +53,14 @@ public class GameCenterHelper {
         database.update(TABLE_USER, initialValues, "UserID = '" + id + "'", null);
     }
 
+    @SuppressLint({"ApplySharedPref", "Recycle"})
     public User auth(User user){
         Cursor cursor = database.query(TABLE_USER,
                 new String[]{"UserID", //0
                         "UserName", //1
                         "UserEmail",//2
-                        "UserPassword",}, //3
+                        "UserPassword",
+                        "UserPhone",},
                  "UserEmail = ?",
                 new String[]{user.getEmail()},
                 null, null, null);
@@ -72,6 +70,7 @@ public class GameCenterHelper {
                     cursor.getString(0),
                     cursor.getString(1),
                     cursor.getString(2),
+                    cursor.getString(3),
                     cursor.getString(3));
 
             if (user.getPassword().equals(user1.getPassword())) {
@@ -127,6 +126,35 @@ public class GameCenterHelper {
         return arrayList;
     }
 
+    public int cartCount() {
+        int count = 0;
+        Cursor cursor = database.query(
+                TABLE_CART,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        if(cursor == null){
+            return 0;
+        }else{
+            cursor.moveToFirst();
+
+            if (cursor.getCount() > 0) {
+                do{
+                    count++;
+                    cursor.moveToNext();
+                } while (!cursor.isAfterLast());
+            }
+        }
+
+        cursor.close();
+
+        return count;
+    }
+
     public ArrayList<Game> viewMyGame() {
         ArrayList<Game> arrayList = new ArrayList<>();
         Cursor cursor = database.query(
@@ -148,12 +176,10 @@ public class GameCenterHelper {
                 game.setName(cursor.getString(cursor.getColumnIndexOrThrow("MyGameName")));
                 game.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("MyGameDescription")));
                 game.setGenre(cursor.getString(cursor.getColumnIndexOrThrow("MyGameGenre")));
-                game.setStock(cursor.getInt(cursor.getColumnIndexOrThrow("MyGameStock")));
-                game.setPrice(cursor.getInt(cursor.getColumnIndexOrThrow("MyGamePrice")));
-                game.setRating(cursor.getDouble(cursor.getColumnIndexOrThrow("MyGameRating")));
                 game.setPlayingHour(cursor.getInt(cursor.getColumnIndexOrThrow("MyGamePlayingHour")));
 
                 arrayList.add(game);
+
                 cursor.moveToNext();
             } while (!cursor.isAfterLast());
         }
@@ -162,7 +188,6 @@ public class GameCenterHelper {
 
         return arrayList;
     }
-
 
     public boolean checkCartState(String id){
         boolean result = false;
@@ -181,6 +206,35 @@ public class GameCenterHelper {
             do{
                 if (cursor.getString(cursor.getColumnIndexOrThrow("CartID")).equals(id)){
                     result = true;
+                    break;
+                }
+                cursor.moveToNext();
+            }while (!cursor.isAfterLast());
+        }
+
+        cursor.close();
+
+        return result;
+    }
+
+    public boolean checkMyGamesState(String id){
+        boolean result = false;
+        Cursor cursor = database.query(
+                TABLE_MY_GAMES,
+                new String[]{"MyGameID"},
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+            do{
+                if (cursor.getString(cursor.getColumnIndexOrThrow("MyGameID")).equals(id)){
+                    result = true;
+                    break;
                 }
                 cursor.moveToNext();
             }while (!cursor.isAfterLast());
@@ -221,6 +275,10 @@ public class GameCenterHelper {
     // prakoso@gmail.com | 123123
     // naufalprakoso24@gmail.com | 123321
 
+    public int getPaymentConfirmation(String userId){
+        return getWalletBalance(userId) - getTotalPriceCart();
+    }
+
     public int getWalletBalance(String id) {
         Cursor cursor = database.query(
                 TABLE_USER,
@@ -233,9 +291,89 @@ public class GameCenterHelper {
                 null);
         cursor.moveToFirst();
 
-        if (cursor.moveToFirst() && cursor.getCount() > 0) {
-            return cursor.getInt(cursor.getColumnIndexOrThrow("UserBalance"));
+        if (cursor.getCount() > 0){
+            do{
+                if (cursor.getString(cursor.getColumnIndexOrThrow("UserID")).equals(id)) {
+                    return cursor.getInt(cursor.getColumnIndexOrThrow("UserBalance"));
+                }
+                cursor.moveToNext();
+            }while(!cursor.isAfterLast());
         }
+
+        cursor.close();
+
+        return 0;
+    }
+
+    public User getUserProfile(String id) {
+        Cursor cursor = database.query(
+                TABLE_USER,
+                new String[]{"UserID", "UserName", "UserPhone", "UserEmail"},
+                "UserID = ?",
+                new String[]{id},
+                null,
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0){
+            do{
+                if (cursor.moveToFirst() && cursor.getCount() > 0) {
+                    if (cursor.getString(cursor.getColumnIndexOrThrow("UserID")).equals(id)) {
+                        User user = new User();
+                        user.setName(cursor.getString(cursor.getColumnIndexOrThrow("UserName")));
+                        user.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("UserPhone")));
+                        user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("UserEmail")));
+                        return user;
+                    }
+                }
+                cursor.moveToNext();
+            }while(!cursor.isAfterLast());
+        }
+
+        cursor.close();
+
+        return null;
+    }
+
+    public void updatePlayingHours(String myGameId, int result){
+        ContentValues initialValues =  new ContentValues();
+        initialValues.put("MyGamePlayingHour", result);
+        database.update(TABLE_MY_GAMES, initialValues, "MyGameID = '" + myGameId + "'", null);
+    }
+
+    public int checkoutCart(String userId, int result){
+        Cursor cursor = database.query(
+                TABLE_CART,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+            do{
+                ContentValues initialValues =  new ContentValues();
+                initialValues.put("MyGameID", cursor.getString(cursor.getColumnIndexOrThrow("CartID")));
+                initialValues.put("MyGameName", cursor.getString(cursor.getColumnIndexOrThrow("CartName")));
+                initialValues.put("MyGameDescription", cursor.getString(cursor.getColumnIndexOrThrow("CartDescription")));
+                initialValues.put("MyGameGenre", cursor.getString(cursor.getColumnIndexOrThrow("CartGenre")));
+                initialValues.put("MyGamePlayingHour", 0);
+                database.insert(TABLE_MY_GAMES, null, initialValues);
+
+                cursor.moveToNext();
+            } while (!cursor.isAfterLast());
+        }
+
+        database.execSQL("delete from " + TABLE_CART);
+
+        ContentValues initialValues =  new ContentValues();
+        initialValues.put("UserBalance", result);
+        database.update(TABLE_USER, initialValues, "UserID = '" + userId + "'", null);
 
         cursor.close();
 
