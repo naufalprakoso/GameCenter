@@ -65,15 +65,17 @@
     <string name="hours">hours</string>
     <string name="play_game">Play Game</string>
     <string name="your_cart_is_empty">Your cart is empty!</string>
-    <string name="top_up_your_wallet_here">Top up your wallet here...</string>
+    <string name="top_up_your_wallet_here">Top up your wallet here…</string>
     <string name="top_up">Top Up</string>
     <string name="payment_confirmation">Payment Confirmation</string>
     <string name="total_price_without_rp">Total price</string>
     <string name="balance">Balance</string>
     <string name="pay">Pay</string>
 
+    <string name="about_us_title">About Us</string>
     <string name="about_us">We offer a catalog of PC, Mac, and Linux games, many of which support Game Center so you can buy once and play anywhere, and Cross-Platform Multiplayer so you can play with all your friends, no matter where they log in</string>
     <string name="title_activity_location">Map</string>
     <string name="profile">Profile</string>
     <string name="user_profile">User Profile</string>
+    <string name="change">Change</string>
 </resources>

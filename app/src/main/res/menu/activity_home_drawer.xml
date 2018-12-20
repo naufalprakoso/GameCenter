@@ -31,7 +31,7 @@
             <item
                 android:id="@+id/nav_information"
                 android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="@string/information" />
+                android:title="@string/about_us_title" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_power_settings_new_black_24dp"

@@ -53,6 +53,10 @@ public class GameCenterHelper {
         database.update(TABLE_USER, initialValues, "UserID = '" + id + "'", null);
     }
 
+    // prakoso@gmail.com | qweqwe
+    // vektoraccelerator@gmail.com | 123321
+    // naufalprakoso24@gmail.com | qweqwe
+
     @SuppressLint({"ApplySharedPref", "Recycle"})
     public User auth(User user){
         Cursor cursor = database.query(TABLE_USER,
@@ -64,26 +68,29 @@ public class GameCenterHelper {
                  "UserEmail = ?",
                 new String[]{user.getEmail()},
                 null, null, null);
+        cursor.moveToFirst();
 
-        if (cursor != null && cursor.moveToFirst()&& cursor.getCount()>0) {
-            User user1 = new User(
-                    cursor.getString(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(3));
+        if (cursor.getCount() > 0) {
+            do{
+                User user1 = new User(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(3));
 
-            if (user.getPassword().equals(user1.getPassword())) {
-                SharedPreferences sharedPreferences = context.getSharedPreferences(Key.APP_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor edit = sharedPreferences.edit();
+                if (user.getPassword().equals(user1.getPassword())) {
+                    SharedPreferences sharedPreferences = context.getSharedPreferences(Key.APP_NAME, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
 
-                edit.putString(Key.USER_ID, user1.getId());
-                edit.putString(Key.USER_NAME, user1.getName());
-                edit.putString(Key.USER_EMAIL, user1.getEmail());
-                edit.commit();
+                    edit.putString(Key.USER_ID, user1.getId());
+                    edit.putString(Key.USER_NAME, user1.getName());
+                    edit.putString(Key.USER_EMAIL, user1.getEmail());
+                    edit.commit();
 
-                return user1;
-            }
+                    return user1;
+                }
+            }while (!cursor.isAfterLast());
         }
 
         return null;
@@ -271,9 +278,6 @@ public class GameCenterHelper {
 
         return totalPrice;
     }
-
-    // prakoso@gmail.com | 123123
-    // naufalprakoso24@gmail.com | 123321
 
     public int getPaymentConfirmation(String userId){
         return getWalletBalance(userId) - getTotalPriceCart();

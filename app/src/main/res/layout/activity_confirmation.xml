@@ -93,7 +93,7 @@
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/balance"/>
+                        android:text="@string/change"/>
 
                     <TextView
                         android:id="@+id/txt_result"

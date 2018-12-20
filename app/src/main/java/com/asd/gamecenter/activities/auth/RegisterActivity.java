@@ -109,6 +109,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 if (name.isEmpty()){
                     edtName.setError(getString(R.string.must_be_filled));
+                }else if (name.length() < 3 || name.length() > 25){
+                    edtName.setError("Name must be 3 - 25 character(s)");
                 }else if (email.isEmpty()){
                     edtEmail.setError(getString(R.string.must_be_filled));
                 }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
@@ -123,9 +125,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     edtConfirmPassword.setError(getString(R.string.password_must_be_the_same));
                 }else if (birthday.isEmpty()){
                     edtBirthday.setError(getString(R.string.choose_birthday_error));
-                }else if (phone.equals("Choose Status")){
+                }else if (phone.isEmpty()){
                     edtPhone.setError(getString(R.string.must_be_filled));
-                }else if (status.isEmpty()){
+                }else if (phone.length() < 10 || phone.length() > 12){
+                    edtPhone.setError("Phone number must be 10 - 12 number(s)");
+                }else if (status.equals("Choose Status")){
                     Toast.makeText(this, R.string.choose_status, Toast.LENGTH_SHORT).show();
                 }else if (gender.isEmpty()){
                     Toast.makeText(this, R.string.choose_gender, Toast.LENGTH_SHORT).show();
