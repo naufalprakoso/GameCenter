@@ -7,7 +7,7 @@ public class Game implements Parcelable {
 
     private int stock, price, qty, playingHour;
     private double rating;
-    private String name, description, genre, id;
+    private String name, description, genre, id, userId;
 
     public Game(){
 
@@ -85,6 +85,14 @@ public class Game implements Parcelable {
         this.playingHour = playingHour;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,6 +109,7 @@ public class Game implements Parcelable {
         dest.writeDouble(this.rating);
         dest.writeInt(this.qty);
         dest.writeInt(this.playingHour);
+        dest.writeString(this.userId);
     }
 
     private Game(Parcel in) {
@@ -113,6 +122,7 @@ public class Game implements Parcelable {
         rating = in.readDouble();
         qty = in.readInt();
         playingHour = in.readInt();
+        userId = in.readString();
     }
 
     public static final Creator<Game> CREATOR = new Creator<Game>() {

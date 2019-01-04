@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_profile"
+        android:id="@+id/action_about_us"
         android:orderInCategory="100"
-        android:title="@string/profile"
+        android:title="@string/about_us_title"
         app:showAsAction="never" />
 </menu>

@@ -11,7 +11,6 @@ public class Key {
 
     // Database
     final public static String DATABASE = "GameCenterDB";
-    final public static String TABLE_CART = "MsCart";
     final public static String TABLE_MY_GAMES = "MsMyGames";
     final public static String TABLE_USER = "MsUser";
 }

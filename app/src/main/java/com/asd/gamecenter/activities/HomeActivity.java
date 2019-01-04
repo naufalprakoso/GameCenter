@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,29 +23,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.asd.gamecenter.database.GameCenterHelper;
-import com.asd.gamecenter.fragments.MyGamesFragment;
-import com.asd.gamecenter.fragments.MyWalletFragment;
 import com.asd.gamecenter.R;
 import com.asd.gamecenter.activities.auth.LoginActivity;
 import com.asd.gamecenter.data.Key;
-import com.asd.gamecenter.fragments.CartFragment;
 import com.asd.gamecenter.fragments.GamesFragment;
 import com.asd.gamecenter.fragments.HomeFragment;
 import com.asd.gamecenter.fragments.InformationFragment;
 
 @SuppressLint({"ApplySharedPref", "StaticFieldLeak"})
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
-
-    private int sendSMSPermission;
-
-    private FloatingActionButton fab;
-    private GameCenterHelper gameCenterHelper;
-    private int getTotalPrice, getBalance;
-    private String getId;
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +42,14 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        HomeFragment homeFragment = new HomeFragment();
+        openFragment(homeFragment);
+
         SharedPreferences sharedPreferences = getSharedPreferences(Key.APP_NAME, Context.MODE_PRIVATE);
-        getId = sharedPreferences.getString(Key.USER_ID, null);
         String getName = sharedPreferences.getString(Key.USER_NAME, null);
         String getEmail = sharedPreferences.getString(Key.USER_EMAIL, null);
 
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(this);
-        fab.hide();
-
-        gameCenterHelper = new GameCenterHelper(this);
-
-        sendSMSPermission = ContextCompat.checkSelfPermission(
+        int sendSMSPermission = ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.SEND_SMS
         );
@@ -84,9 +66,6 @@ public class HomeActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        HomeFragment homeFragment = new HomeFragment();
-        openFragment(homeFragment);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -119,9 +98,9 @@ public class HomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_profile) {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
+        if (id == R.id.action_about_us) {
+            InformationFragment informationFragment = new InformationFragment();
+            openFragment(informationFragment);
             return true;
         }
 
@@ -136,37 +115,9 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             HomeFragment homeFragment = new HomeFragment();
             openFragment(homeFragment);
-
-            fab.hide();
-        } else if (id == R.id.nav_cart) {
-            CartFragment cartFragment = new CartFragment();
-            openFragment(cartFragment);
-
-            gameCenterHelper.open();
-            new LoadTotalPrice().execute();
-            new LoadWalletBalance().execute();
-
-            fab.show();
         } else if (id == R.id.nav_games) {
             GamesFragment gamesFragment = new GamesFragment();
             openFragment(gamesFragment);
-
-            fab.hide();
-        } else if (id == R.id.nav_wallet) {
-            MyWalletFragment myWalletFragment = new MyWalletFragment();
-            openFragment(myWalletFragment);
-
-            fab.hide();
-        } else if (id == R.id.nav_my_games) {
-            MyGamesFragment myGamesFragment = new MyGamesFragment();
-            openFragment(myGamesFragment);
-
-            fab.hide();
-        } else if (id == R.id.nav_information) {
-            InformationFragment informationFragment = new InformationFragment();
-            openFragment(informationFragment);
-
-            fab.hide();
         } else if (id == R.id.nav_logout) {
             SharedPreferences sharedPreferences = getSharedPreferences(Key.APP_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -192,64 +143,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.fab:
-                if (getTotalPrice > 0){
-                    if(getBalance < getTotalPrice){
-                        Toast.makeText(this, "Your balance is not sufficient for this transaction", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Intent intent = new Intent(this, ConfirmationActivity.class);
-                        startActivity(intent);
-                    }
-                }else{
-                    Toast.makeText(this, "There is no game in your cart", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    private class LoadTotalPrice extends AsyncTask<Void, Void, Integer> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            return gameCenterHelper.getTotalPriceCart();
-        }
-
-        @Override
-        protected void onPostExecute(Integer totalPrice) {
-            super.onPostExecute(totalPrice);
-
-            getTotalPrice = totalPrice;
-        }
-    }
-
-    private class LoadWalletBalance extends AsyncTask<Void, Void, Integer> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            return gameCenterHelper.getWalletBalance(getId);
-        }
-
-        @Override
-        protected void onPostExecute(Integer balance) {
-            super.onPostExecute(balance);
-
-            getBalance = balance;
-        }
     }
 }

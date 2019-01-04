@@ -12,26 +12,10 @@
             android:id="@+id/nav_games"
             android:icon="@drawable/ic_games_black_24dp"
             android:title="@string/games" />
-        <item
-            android:id="@+id/nav_cart"
-            android:icon="@drawable/ic_shopping_cart_black_24dp"
-            android:title="@string/cart" />
-        <item
-            android:id="@+id/nav_my_games"
-            android:icon="@drawable/ic_videogame_asset_black_24dp"
-            android:title="@string/my_games" />
-        <item
-            android:id="@+id/nav_wallet"
-            android:icon="@drawable/ic_account_balance_wallet_black_24dp"
-            android:title="@string/my_wallet" />
     </group>
 
     <item android:title="@string/communicate">
         <menu>
-            <item
-                android:id="@+id/nav_information"
-                android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="@string/about_us_title" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_power_settings_new_black_24dp"

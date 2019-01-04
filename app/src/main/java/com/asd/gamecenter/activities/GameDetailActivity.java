@@ -1,5 +1,6 @@
 package com.asd.gamecenter.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.asd.gamecenter.R;
 import com.asd.gamecenter.data.Key;
@@ -23,7 +23,6 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
     private Game game;
 
     private String getId;
-    private Boolean resultState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        new LoadCartState().execute();
         new LoadMyGameState().execute();
     }
 
@@ -71,15 +69,9 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
-                if(resultState){
-                    Toast.makeText(this, "You already have this game in the cart", Toast.LENGTH_SHORT).show();
-                }else{
-                    gameCenterHelper.insertGame(game);
-
-                    Toast.makeText(this, "Added to cart!", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                new LoadCartState().execute();
+                Intent intent = new Intent(this, ConfirmationActivity.class);
+                intent.putExtra(Key.GAME_DETAIL, game);
+                startActivity(intent);
                 break;
         }
     }
@@ -88,25 +80,6 @@ public class GameDetailActivity extends AppCompatActivity implements View.OnClic
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onNavigateUp();
-    }
-
-    private class LoadCartState extends AsyncTask<Void, Void, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            return gameCenterHelper.checkCartState(getId);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-
-            resultState = result;
-        }
     }
 
     private class LoadMyGameState extends AsyncTask<Void, Void, Boolean> {

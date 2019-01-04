@@ -78,4 +78,6 @@
     <string name="profile">Profile</string>
     <string name="user_profile">User Profile</string>
     <string name="change">Change</string>
+    <string name="input_your_money">Input your money</string>
+    <string name="you_don_t_have_a_game">You don\'t have a game</string>
 </resources>
