@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class GameCenterHelper {
     private static String TABLE_USER = Key.TABLE_USER;
     private static String TABLE_MY_GAMES = Key.TABLE_MY_GAMES;
+    private static String TABLE_GAMES = Key.TABLE_GAMES;
 
     private Context context;
-    private DatabaseHelper dataBaseHelper;
 
     private SQLiteDatabase database;
 
@@ -28,7 +28,7 @@ public class GameCenterHelper {
     }
 
     public void open() throws SQLException {
-        dataBaseHelper = new DatabaseHelper(context);
+        DatabaseHelper dataBaseHelper = new DatabaseHelper(context);
         database = dataBaseHelper.getWritableDatabase();
     }
 
@@ -89,7 +89,6 @@ public class GameCenterHelper {
         return null;
     }
 
-
     public ArrayList<Game> viewMyGame() {
         ArrayList<Game> arrayList = new ArrayList<>();
         Cursor cursor = database.query(
@@ -112,6 +111,42 @@ public class GameCenterHelper {
                 game.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("MyGameDescription")));
                 game.setGenre(cursor.getString(cursor.getColumnIndexOrThrow("MyGameGenre")));
                 game.setPlayingHour(cursor.getInt(cursor.getColumnIndexOrThrow("MyGamePlayingHour")));
+
+                arrayList.add(game);
+
+                cursor.moveToNext();
+            } while (!cursor.isAfterLast());
+        }
+
+        cursor.close();
+
+        return arrayList;
+    }
+
+    public ArrayList<Game> viewGame() {
+        ArrayList<Game> arrayList = new ArrayList<>();
+        Cursor cursor = database.query(
+                TABLE_GAMES,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+        Game game;
+
+        if (cursor.getCount() > 0) {
+            do {
+                game = new Game();
+                game.setId(cursor.getString(cursor.getColumnIndexOrThrow("GameID")));
+                game.setName(cursor.getString(cursor.getColumnIndexOrThrow("GameName")));
+                game.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("GameDescription")));
+                game.setGenre(cursor.getString(cursor.getColumnIndexOrThrow("GameGenre")));
+                game.setStock(cursor.getInt(cursor.getColumnIndexOrThrow("GameStock")));
+                game.setPrice(cursor.getInt(cursor.getColumnIndexOrThrow("GamePrice")));
+                game.setRating(cursor.getFloat(cursor.getColumnIndexOrThrow("GameRating")));
 
                 arrayList.add(game);
 
@@ -209,5 +244,17 @@ public class GameCenterHelper {
         initialValues.put("MyGameUserId", userId);
         database.insert(TABLE_MY_GAMES, null, initialValues);
         return 0;
+    }
+
+    public void insertGame(Game game){
+        ContentValues initialValues =  new ContentValues();
+        initialValues.put("GameID", game.getId());
+        initialValues.put("GameName", game.getName());
+        initialValues.put("GameDescription", game.getDescription());
+        initialValues.put("GameGenre", game.getGenre());
+        initialValues.put("GameStock", game.getStock());
+        initialValues.put("GamePrice", game.getPrice());
+        initialValues.put("GameRating", game.getRating());
+        database.insert(TABLE_GAMES, null, initialValues);
     }
 }

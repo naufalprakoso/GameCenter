@@ -8,7 +8,7 @@ import com.asd.gamecenter.data.Key;
 
 class DatabaseHelper extends SQLiteOpenHelper {
     private static String DATABASE_NAME = Key.DATABASE;
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 11;
 
     private static final String SQL_CREATE_TABLE_MY_GAMES = String.format("CREATE TABLE %s"
                     + " (%s TEXT PRIMARY KEY," +
@@ -24,6 +24,24 @@ class DatabaseHelper extends SQLiteOpenHelper {
             "MyGameGenre",
             "MyGamePlayingHour",
             "MyGameUserId"
+            );
+
+    private static final String SQL_CREATE_TABLE_GAMES = String.format("CREATE TABLE %s"
+                    + " (%s TEXT PRIMARY KEY," +
+                    " %s TEXT NOT NULL," +
+                    " %s TEXT NOT NULL," +
+                    " %s TEXT NOT NULL, "+
+                    " %s INTEGER NOT NULL, "+
+                    " %s INTEGER NOT NULL, "+
+                    " %s REAL NOT NULL)",
+            Key.TABLE_GAMES,
+            "GameID",
+            "GameName",
+            "GameDescription",
+            "GameGenre",
+            "GameStock",
+            "GamePrice",
+            "GameRating"
             );
 
     private static final String SQL_CREATE_TABLE_USER = String.format("CREATE TABLE %s"
@@ -55,12 +73,14 @@ class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE_USER);
+        db.execSQL(SQL_CREATE_TABLE_GAMES);
         db.execSQL(SQL_CREATE_TABLE_MY_GAMES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + Key.TABLE_USER);
+        db.execSQL("DROP TABLE IF EXISTS " + Key.TABLE_GAMES);
         db.execSQL("DROP TABLE IF EXISTS " + Key.TABLE_MY_GAMES);
         onCreate(db);
     }

@@ -9,8 +9,11 @@ public class Key {
 
     final public static String GAME_DETAIL = "GameDetail";
 
+    final public static String FIRST_TIME = "FirstTime";
+
     // Database
     final public static String DATABASE = "GameCenterDB";
     final public static String TABLE_MY_GAMES = "MsMyGames";
+    final public static String TABLE_GAMES = "MsGames";
     final public static String TABLE_USER = "MsUser";
 }

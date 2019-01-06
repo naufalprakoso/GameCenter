@@ -24,16 +24,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.asd.gamecenter.R;
 import com.asd.gamecenter.activities.auth.LoginActivity;
 import com.asd.gamecenter.data.Key;
+import com.asd.gamecenter.database.GameCenterHelper;
 import com.asd.gamecenter.fragments.GamesFragment;
 import com.asd.gamecenter.fragments.HomeFragment;
 import com.asd.gamecenter.fragments.InformationFragment;
+import com.asd.gamecenter.model.Game;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @SuppressLint({"ApplySharedPref", "StaticFieldLeak"})
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private GameCenterHelper gameCenterHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +58,11 @@ public class HomeActivity extends AppCompatActivity
         HomeFragment homeFragment = new HomeFragment();
         openFragment(homeFragment);
 
+        gameCenterHelper = new GameCenterHelper(this);
+        gameCenterHelper.open();
+
         SharedPreferences sharedPreferences = getSharedPreferences(Key.APP_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         String getName = sharedPreferences.getString(Key.USER_NAME, null);
         String getEmail = sharedPreferences.getString(Key.USER_EMAIL, null);
 
@@ -59,6 +76,45 @@ public class HomeActivity extends AppCompatActivity
                             Manifest.permission.SEND_SMS
                     },1
             );
+        }
+
+        Boolean firstTime = sharedPreferences.getBoolean(Key.FIRST_TIME, false);
+        if (!firstTime){
+            String url = getString(R.string.api_games);
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    for(int i = 0; i < response.length(); i++){
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+
+                            Game game = new Game();
+                            game.setId(jsonObject.getString("id"));
+                            game.setName(jsonObject.getString("name"));
+                            game.setDescription(jsonObject.getString("description"));
+                            game.setGenre(jsonObject.getString("genre"));
+                            game.setPrice(jsonObject.getInt("price"));
+                            game.setStock(jsonObject.getInt("stock"));
+                            game.setRating(jsonObject.getDouble("rating"));
+
+                            gameCenterHelper.insertGame(game);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(jsonArrayRequest);
+
+            editor.putBoolean(Key.FIRST_TIME, true);
+            editor.apply();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
