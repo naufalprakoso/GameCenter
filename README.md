@@ -1,2 +1,2 @@
 # GameCenter
-Even 18/19 - MAD Project
+Android Game Center Management using Volley and SQLite
